@@ -11,6 +11,16 @@
 
 > 仓库地址：https://github.com/lululu0515/yangche-youpu
 
+## 界面
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="18%" alt="首页：车模卡片与用车概览" />
+  <img src="docs/screenshots/bills.png" width="18%" alt="账目：按月汇总与分类筛选" />
+  <img src="docs/screenshots/stats.png" width="18%" alt="用车报告：支出结构与近半年趋势" />
+  <img src="docs/screenshots/me.png" width="18%" alt="我的：车辆档案、导入导出与云备份" />
+  <img src="docs/screenshots/report.png" width="18%" alt="年度报告：一年的养车账单" />
+</p>
+
 ## 目录结构
 
 ```
@@ -29,6 +39,7 @@ yangche-youpu/
 ├── ios/                  # Xcode 工程（CocoaPods）
 ├── android/              # Android Studio / Gradle 工程
 ├── src/icons/            # 应用图标（1024 / 512 / 192 / 180 / maskable）
+├── docs/screenshots/     # README 界面截图
 └── capacitor.config.json
 ```
 
