@@ -7,7 +7,9 @@
 - **PWA**：`www/` 部署到任意静态服务器即可「添加到主屏幕」，全屏无浏览器 UI 运行
 - **云备份**：内置 WebDAV 客户端，账本可备份到坚果云、Nextcloud、群晖等自有存储
 
-当前版本：**v1.11.3** · 开源协议：MIT
+当前版本：**v1.11.3** · 开源协议：[MIT](LICENSE)
+
+> 仓库地址：https://github.com/lululu0515/yangche-youpu
 
 ## 目录结构
 
@@ -32,7 +34,14 @@ yangche-youpu/
 
 ## 运行
 
-### 从源码构建（首次必做）
+### 1. 克隆
+
+```bash
+git clone https://github.com/lululu0515/yangche-youpu.git
+cd yangche-youpu
+```
+
+### 2. 从源码构建（首次必做）
 
 `www/` 是构建产物，不在仓库里。克隆后先构建一次：
 
