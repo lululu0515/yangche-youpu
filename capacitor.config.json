@@ -1,0 +1,19 @@
+{
+  "appId": "com.yangche.youpu",
+  "appName": "养车有谱",
+  "webDir": "www",
+  "backgroundColor": "#eaf4fd",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#eaf4fd"
+  },
+  "android": {
+    "backgroundColor": "#eaf4fd",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

@@ -1,0 +1,56 @@
+# 依赖
+node_modules/
+
+# 构建产物（由 npm run build 生成）
+www/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+
+# Android 构建
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+android/app/src/main/libs/
+
+# iOS 构建
+ios/App/Pods/
+ios/App/build/
+ios/App/DerivedData/
+ios/App/xcuserdata/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/capacitor-cordova-ios-plugins/
+
+# 签名文件：绝不入库
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+keystore.properties
+signing.properties
+
+# 安装包
+*.apk
+*.aab
+*.ipa
+*.dSYM.zip
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+yarn-error.log*
+.capacitor/

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38d295"/>
+      <stop offset="0.45" stop-color="#16b273"/>
+      <stop offset="1" stop-color="#067a48"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.28" cy="0.12" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.34"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.62" stop-color="#f2fbf6"/>
+      <stop offset="1" stop-color="#d8efe2"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffe2a1"/>
+      <stop offset="1" stop-color="#f6ae2d"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+
+  <ellipse cx="512" cy="724" rx="268" ry="26" fill="#04563a" opacity="0.26"/>
+
+  <g transform="translate(512 512) scale(0.9) translate(-512 -512)">
+    <!-- 车身 -->
+    <path d="M236 596c0-70 22-116 80-138l56-22c20-68 70-104 152-104h82c54 0 94 28 124 84l18 36c40 20 52 64 52 120v34c0 26-16 42-42 42H282c-28 0-46-18-46-44z"
+          fill="url(#body)"/>
+    <!-- 车顶高光 -->
+    <path d="M376 434c18-56 60-86 132-86h74c48 0 82 24 108 72" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+    <!-- 后窗 -->
+    <path d="M438 386c-8 22-14 44-16 66h96v-66z" fill="#0a6b47"/>
+    <path d="M448 398c-4 14-8 28-9 42h66v-42z" fill="#7fd8b0" opacity="0.55"/>
+    <!-- 前窗 -->
+    <path d="M542 386h78c34 0 58 22 76 66h-154z" fill="#0a6b47"/>
+    <path d="M558 398h58c24 0 42 14 56 42h-114z" fill="#7fd8b0" opacity="0.55"/>
+    <!-- 车门缝 + 把手 -->
+    <path d="M528 470v168" stroke="#c2ddcf" stroke-width="7" stroke-linecap="round"/>
+    <rect x="548" y="540" width="52" height="22" rx="11" fill="#c2ddcf"/>
+    <!-- 前灯 -->
+    <rect x="700" y="520" width="86" height="34" rx="17" fill="url(#gold)"/>
+    <rect x="716" y="529" width="42" height="11" rx="5.5" fill="#fff6dd" opacity="0.8"/>
+    <!-- 保险杠 -->
+    <!-- 后轮 -->
+    <circle cx="368" cy="648" r="88" fill="#f7fdf9"/>
+    <circle cx="368" cy="648" r="58" fill="#0a6b47"/>
+    <circle cx="368" cy="648" r="24" fill="url(#gold)"/>
+    <!-- 前轮 -->
+    <circle cx="690" cy="648" r="88" fill="#f7fdf9"/>
+    <circle cx="690" cy="648" r="58" fill="#0a6b47"/>
+    <circle cx="690" cy="648" r="24" fill="url(#gold)"/>
+    <!-- 车底阴影分割 -->
+    <path d="M300 686h470" stroke="#c9e3d6" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- 路面 / 账本刻度 -->
+  <g opacity="0.95">
+    <rect x="330" y="788" width="368" height="15" rx="7.5" fill="#ffd37a"/>
+    <rect x="330" y="822" width="252" height="15" rx="7.5" fill="#ffffff" opacity="0.46"/>
+  </g>
+</svg>

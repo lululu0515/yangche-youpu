@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#eaf4fd" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/icon-180.png" />
+<title>养车有谱 · 用车成本记录</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f9f66'/%3E%3Cpath d='M18 74C32 68 38 56 50 50s22-16 32-24' stroke='white' stroke-width='9' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+<meta name="apple-mobile-web-app-title" content="养车有谱" />
+<script>
+  (function () {
+    try {
+      var m = window.matchMedia &&
+        (window.matchMedia("(display-mode: standalone)").matches ||
+         window.matchMedia("(display-mode: fullscreen)").matches);
+      if (m || window.navigator.standalone === true || window.Capacitor) {
+        document.documentElement.classList.add("is-app");
+      }
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============ 图标系统 ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 8.5a6 6 0 1 0-12 0c0 6.2-3 8.2-3 8.2h18s-3-2-3-8.2" />
+    <path d="M13.7 20.5a2 2 0 0 1-3.4 0" />
+  </symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 21V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v16" />
+    <path d="M5 11.5h8" />
+    <path d="M13 7.5h2.6L19 11v6.2a1.8 1.8 0 0 0 3.6 0V13" />
+    <path d="M3 21h12" />
+  </symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.6 16.5a9 9 0 1 0-17.2 0" />
+    <path d="m12 12.5 4.2-3.4" />
+    <circle cx="12" cy="13.4" r="1.5" fill="currentColor" stroke="none" />
+  </symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.6 6.3a1 1 0 0 0 0 1.4l1.7 1.7a1 1 0 0 0 1.4 0l3.6-3.6a6 6 0 0 1-7.9 7.9l-6.7 6.7a2.1 2.1 0 1 1-3-3l6.7-6.7a6 6 0 0 1 7.9-7.9z" />
+  </symbol>
+  <symbol id="i-park" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="5.5" />
+    <path d="M9.4 17V7.2h3.3a3.4 3.4 0 0 1 0 6.8H9.4" />
+  </symbol>
+  <symbol id="i-wash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 3.2s4.8 4.6 4.8 8.3a4.8 4.8 0 0 1-9.6 0c0-3.7 4.8-8.3 4.8-8.3z" />
+    <path d="M19.2 4.2v2.4M18 5.4h2.4M20 14v2M19 15h2" />
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.2 19 6v5.4c0 4.4-3 8.1-7 9.4-4-1.3-7-5-7-9.4V6z" />
+    <path d="m9 12 2 2 4-4.2" />
+  </symbol>
+  <filter id="dock-body-optics" filterUnits="userSpaceOnUse" x="0" y="0" width="364" height="68" color-interpolation-filters="sRGB">
+    <feImage href="dock-body-map.png" x="0" y="0" width="364" height="68" preserveAspectRatio="none" result="offset"/>
+    <feDisplacementMap in="SourceGraphic" in2="offset" scale="88" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="lens-optics" filterUnits="userSpaceOnUse" x="0" y="0" width="94" height="80" color-interpolation-filters="sRGB">
+    <feImage href="dock-refraction.png" x="0" y="0" width="94" height="80" preserveAspectRatio="none" result="offset"/>
+    <feDisplacementMap in="SourceGraphic" in2="offset" scale="88" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10.4 12 3.7l8 6.7V19a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 19z" />
+    <path d="M9.6 20.4v-6.1h4.8v6.1" />
+  </symbol>
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="3.2" width="16" height="17.6" rx="4.2" />
+    <path d="M8.2 8.4h7.6M8.2 12h7.6M8.2 15.6h4.8" />
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20V11.4M10 20V4.4M16 20v-6.2M22 20H2" />
+  </symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8.2" r="3.7" />
+    <path d="M4.6 20.4a7.4 7.4 0 0 1 14.8 0" />
+  </symbol>
+  <symbol id="i-home-f" viewBox="0 0 24 24">
+    <path fill="currentColor" stroke="none" d="M12 .5 23.5 9.5v12q0 2-2.3 2H2.8q-2.3 0-2.3-2v-12Z"/>
+    <rect x="10.4" y="11" width="3.2" height="7.6" rx="1.6" fill="white" stroke="none"/>
+  </symbol>
+  <symbol id="i-list-f" viewBox="0 0 24 24">
+    <rect x="1.5" y="1.5" width="21" height="22" rx="4.2" fill="currentColor" stroke="none"/>
+    <rect x="7.8" y="17.2" width="8.4" height="2.5" rx="1.25" fill="white" stroke="none"/>
+  </symbol>
+  <symbol id="i-chart-f" viewBox="0 0 24 24">
+    <circle cx="12" cy="12.5" r="11.5" fill="currentColor" stroke="none"/>
+    <path transform="rotate(45 12 12.5)" fill="white" stroke="none" d="m12 5.7 3.8 6.8-3.8 6.8-3.8-6.8Z"/>
+    <circle cx="12" cy="12.5" r="1.6" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-user-f" viewBox="0 0 24 24">
+    <circle cx="12" cy="7.5" r="5.4" fill="currentColor" stroke="none"/>
+    <path fill="currentColor" stroke="none" d="M1.5 22.5q0-8 10.5-8t10.5 8Z"/>
+  </symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.4c.4 3.9 2.1 6.4 5.9 7.2-3.8.8-5.5 3.3-5.9 7.2-.4-3.9-2.1-6.4-5.9-7.2 3.8-.8 5.5-3.3 5.9-7.2Z" />
+    <path d="M18.6 14.6c.2 2 .9 3.2 2.9 3.7-2 .5-2.7 1.7-2.9 3.7-.2-2-.9-3.2-2.9-3.7 2-.5 2.7-1.7 2.9-3.7Z" opacity=".7" />
+  </symbol>
+  <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 15.4V3.6" />
+    <path d="m8.2 7.2 3.8-3.6 3.8 3.6" />
+    <path d="M5.2 12.6v6.2a1.8 1.8 0 0 0 1.8 1.8h10a1.8 1.8 0 0 0 1.8-1.8v-6.2" />
+  </symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.4 4.2h9.2v4.4a4.6 4.6 0 0 1-9.2 0Z" />
+    <path d="M7.4 5.6H4.8v1.6a3 3 0 0 0 3 3M16.6 5.6h2.6v1.6a3 3 0 0 1-3 3" />
+    <path d="M12 13.2v4.2M8.6 20.4h6.8" />
+  </symbol>
+  <linearGradient id="fab-gradient" x2="1" y2="1">
+    <stop stop-color="#5bc87a"/><stop offset="1" stop-color="#1ea25a"/>
+  </linearGradient>
+  <symbol id="fab-art" viewBox="0 0 54 44">
+    <rect width="54" height="44" rx="22" fill="url(#fab-gradient)"/>
+    <path d="M27 14.5v15m-7.5-7.5h15" fill="none" stroke="white" stroke-width="3.8" stroke-linecap="round"/>
+  </symbol>
+  <clipPath id="fab-outside-lens" clipPathUnits="objectBoundingBox">
+    <path id="fab-cutout" clip-rule="evenodd" d="M0 0H1V1H0Z"/>
+  </clipPath>
+  <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m9.5 5.5 7 6.5-7 6.5" />
+  </symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m5.5 9 6.5 7 6.5-7" />
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.2 6.2l11.6 11.6M17.8 6.2 6.2 17.8" />
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m5 12.6 4.6 4.6L19 7.4" />
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.4" y="5" width="17.2" height="16" rx="4" />
+    <path d="M8 3v4M16 3v4M3.4 10.4h17.2" />
+  </symbol>
+  <symbol id="i-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 6.4a2 2 0 0 1 2-2h11.2a2 2 0 0 1 2 2v11.2a2 2 0 0 1-2 2H6.4a2 2 0 0 1-2-2z" />
+    <path d="M8.2 9h7.6M8.2 13h5.4" />
+  </symbol>
+  <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.2 16.4v-4l1.9-5.6h9.8l1.9 5.6v4" />
+    <path d="M3.6 16.4h16.8" />
+    <circle cx="7.6" cy="17.4" r="1.7" />
+    <circle cx="16.4" cy="17.4" r="1.7" />
+  </symbol>
+  <symbol id="i-road" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.6 3.2 4.8 20.8M16.4 3.2l2.8 17.6M12 4v3M12 11v3M12 18v3" />
+  </symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <circle cx="5.4" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="18.6" cy="12" r="1.5" />
+  </symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3.6 4.4 8.2a3.2 3.2 0 0 0 0 4.6l6.8 6.8a3.2 3.2 0 0 0 4.6 0l4.6-4.6z" />
+    <path d="M7.6 12.4h5.8" />
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 7h15.2M9.2 7V4.4h5.6V7M6.6 7l.9 12.6h9l.9-12.6" />
+  </symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 7.4h8.4M17.6 7.4H20M4 16.6h2.4M11.6 16.6H20" />
+    <circle cx="15" cy="7.4" r="2.4" /><circle cx="9" cy="16.6" r="2.4" />
+  </symbol>
+  <symbol id="i-export" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 15.4V3.6m0 0L8 7.6m4-4 4 4" />
+    <path d="M4.4 14v3.6a3 3 0 0 0 3 3h9.2a3 3 0 0 0 3-3V14" />
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 7h15.2M4.4 12h15.2M4.4 17h9.6" />
+  </symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 17.6a6.4 6.4 0 1 1 6 0v1.8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z" />
+    <path d="M9.6 21.2h4.8" />
+  </symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 5.5 7.5 12l7 6.5" />
+  </symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.6 18.4a4.6 4.6 0 0 1-.5-9.2 6 6 0 0 1 11.5 1.4 3.9 3.9 0 0 1-.8 7.8z" />
+    <path d="M12 11.6v6M9.6 15.2 12 17.6l2.4-2.4" />
+  </symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 17.4V5.2m0 0L7.8 9.4M12 5.2l4.2 4.2" />
+    <path d="M4.6 15.6v2.6a2.6 2.6 0 0 0 2.6 2.6h9.6a2.6 2.6 0 0 0 2.6-2.6v-2.6" />
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4.6v12.2m0 0 4.2-4.2M12 16.8 7.8 12.6" />
+    <path d="M4.6 15.6v2.6a2.6 2.6 0 0 0 2.6 2.6h9.6a2.6 2.6 0 0 0 2.6-2.6v-2.6" />
+  </symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.6 19.4h4l10-10a2.4 2.4 0 0 0-3.4-3.4l-10 10z" />
+    <path d="m13.6 7.4 3 3" />
+  </symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6" />
+    <path d="M12 11v5.4M12 7.9v.2" />
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4.8" y="10.2" width="14.4" height="10" rx="3.4" />
+    <path d="M8.4 10.2V8a3.6 3.6 0 0 1 7.2 0v2.2M12 14.2v2.4" />
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.4 12a7.4 7.4 0 1 1-2.2-5.2" />
+    <path d="M19.6 4.6v4.2h-4.2" />
+  </symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.4s5.4 5.2 5.4 9.2a5.4 5.4 0 0 1-10.8 0c0-4 5.4-9.2 5.4-9.2z" />
+  </symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8.2" cy="12" r="3.6" />
+    <path d="M11.8 12h8.4M17.4 12v3.2M20.2 12v2.4" />
+  </symbol>
+</defs></svg>
+
+<div class="stage">
+  <div class="stage__glow stage__glow--a"></div>
+  <div class="stage__glow stage__glow--b"></div>
+  <div class="stage__glow stage__glow--c"></div>
+
+  <div class="device">
+    <div class="screen">
+      <div class="app" id="app">
+
+        <!-- 环境光 -->
+        <div class="ambient" aria-hidden="true"></div>
+        <!-- 状态栏 -->
+        <div class="statusbar" aria-hidden="true">
+          <span class="statusbar__time" id="clock">9:41</span>
+          <div class="island"><i class="island__cam"></i><i class="island__dot"></i></div>
+          <div class="statusbar__right">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="#0b1a2e">
+              <rect x="0" y="7" width="3" height="4" rx="1" />
+              <rect x="4.6" y="5" width="3" height="6" rx="1" />
+              <rect x="9.2" y="2.6" width="3" height="8.4" rx="1" />
+              <rect x="13.8" y="0" width="3" height="11" rx="1" />
+            </svg>
+            <span style="font-size:9.5px;font-weight:700;letter-spacing:.02em">5G</span>
+            <svg width="26" height="13" viewBox="0 0 26 13">
+              <rect x=".5" y=".5" width="22" height="12" rx="3.6" fill="none" stroke="rgba(11,26,46,.32)" />
+              <rect x="2" y="2" width="15.5" height="9" rx="2.2" fill="#0b1a2e" />
+              <path d="M24.2 4.6v3.8c.9-.3 1.4-1 1.4-1.9s-.5-1.6-1.4-1.9z" fill="rgba(11,26,46,.35)" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- ============ 页面 ============ -->
+        <main class="pages" id="pages">
+
+          <!-- ========== 首页 ========== -->
+          <section class="page is-active" id="page-home" data-page="home" role="tabpanel" aria-labelledby="tab-home">
+
+            <header class="brand" style="--i:0">
+              <div class="brand__left">
+                <div class="brand__mark">
+                  <img src="icons/brand-192.png" alt="" width="44" height="44" />
+                </div>
+                <div>
+                  <h1>养车有谱</h1>
+                </div>
+              </div>
+              <button class="iconbtn bell" id="bellBtn" aria-label="消息">
+                <svg class="ico" style="width:21px;height:21px"><use href="#i-bell" /></svg>
+                <span class="bell__dot"></span>
+              </button>
+            </header>
+
+            <section class="garage is-scene-visible" id="garage" aria-label="Lucas的车库" style="--i:1">
+              <div class="garage__world" aria-hidden="true">
+                <svg class="garage__landscape" viewBox="0 0 440 290" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="hillShade" x2="0" y2="1">
+                      <stop stop-color="var(--hill-light)"/><stop offset="1" stop-color="var(--hill-shade)"/>
+                    </linearGradient>
+                    <linearGradient id="roadShade" x2="0" y2="1">
+                      <stop stop-color="var(--road-top)"/><stop offset="1" stop-color="var(--road-bottom)"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M-12 146C45 138 77 96 124 111S184 149 229 127s67-70 116-54 76 49 113 46v182H-12Z" fill="url(#hillShade)"/>
+                  <path d="M-10 174c59-4 79-18 121-14s88 12 134-14 101-43 205-12v172H-10Z" fill="var(--hill-near)"/>
+                  <path d="M-15 184H455V292H-15Z" fill="url(#roadShade)"/>
+                  <path d="M-15 184H455V187H-15Z" fill="var(--road-top)"/>
+                  <path d="M-15 187H455" fill="none" stroke="var(--road-bottom)" stroke-width="1" opacity=".5"/>
+                  <path d="M-15 184H455" fill="none" stroke="var(--road-mark)" stroke-width="1.2" opacity=".42"/>
+                  <path d="M-15 232H455M-15 272H455" fill="none" stroke="var(--road-mark)" stroke-width="1" opacity=".07"/>
+                </svg>
+              </div>
+              <div class="garage__heading"><p class="garage__owner" id="garageOwner">Lucas的车库</p><h2 id="garageName">小吉</h2><p id="garageType">燃油汽车</p></div>
+              <div class="garage__vehicle" aria-hidden="true"><div class="garage__shadow"></div><div class="garage__car" id="garageCar"></div></div>
+              <div class="garage__dash"><span class="garage__label">当前里程</span><span class="garage__reading"><b id="heroMileage">—</b> km</span></div>
+              <button type="button" class="garage__open" data-open="carSheet" aria-label="查看小吉的车辆档案"><span>车辆档案 <svg class="ico" aria-hidden="true"><use href="#i-chev"/></svg></span></button>
+            </section>
+            <!-- 快速记账 -->
+            <section class="glass quick" style="--i:4">
+              <div class="sec-head" style="padding:0 4px 0">
+                <h2>快速记账</h2>
+                <button class="more" data-open="entrySheet">更多类别
+                  <svg class="ico" style="width:12px;height:12px"><use href="#i-chev" /></svg>
+                </button>
+              </div>
+              <div class="quick__grid">
+                <button class="quick__item" data-quick="fuel">
+                  <span class="orb orb--fuel"><svg class="ico"><use href="#i-fuel" /></svg></span>
+                  <span class="quick__label">加油</span>
+                </button>
+                <button class="quick__item" data-quick="care">
+                  <span class="orb orb--care"><svg class="ico"><use href="#i-wrench" /></svg></span>
+                  <span class="quick__label">保养</span>
+                </button>
+                <button class="quick__item" data-quick="park">
+                  <span class="orb orb--park"><svg class="ico"><use href="#i-park" /></svg></span>
+                  <span class="quick__label">停车</span>
+                </button>
+                <button class="quick__item" data-quick="wash">
+                  <span class="orb orb--wash"><svg class="ico"><use href="#i-wash" /></svg></span>
+                  <span class="quick__label">洗车</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="home-overview" aria-labelledby="overviewTitle">
+            <div class="overview-heading"><h2 id="overviewTitle">用车概览</h2></div>
+            <!-- 指标 -->
+            <div class="metrics" style="--i:2">
+              <div class="glass metric">
+                <div class="metric__ghost"></div>
+                <div class="metric__top">
+                  <div class="metric__icon metric__icon--orange">
+                    <svg class="ico"><use href="#i-fuel" /></svg>
+                  </div>
+                  <span class="metric__label">平均油耗</span>
+                </div>
+                <div class="metric__val"><b id="avgFuel">8.1</b><i>L/100km</i></div>
+                <div class="metric__hint">连续加满法</div>
+              </div>
+              <div class="glass metric metric--blue">
+                <div class="metric__ghost"></div>
+                <div class="metric__top">
+                  <div class="metric__icon metric__icon--blue">
+                    <svg class="ico"><use href="#i-gauge" /></svg>
+                  </div>
+                  <span class="metric__label">单公里成本</span>
+                </div>
+                <div class="metric__val"><b id="perKm">1.9</b><i>元/km</i></div>
+                <div class="metric__hint">记账区间费用 ÷ 区间里程</div>
+              </div>
+            </div>
+
+            <!-- 四宫格 -->
+            <div class="quad" style="--i:3">
+              <div class="qcard" style="--tint:rgba(34,192,122,.16)">
+                <div class="qcard__ic qcard__ic--green">
+                  <svg class="ico"><use href="#i-chart" /></svg>
+                </div>
+                <div class="qcard__label">累计支出</div>
+                <div class="qcard__val"><small>¥</small><span id="qTotal">2,636</span></div>
+                <div class="qcard__foot" id="qTotalFoot">共 24 笔</div>
+              </div>
+              <div class="qcard" style="--tint:rgba(34,195,166,.16)">
+                <div class="qcard__ic qcard__ic--teal">
+                  <svg class="ico"><use href="#i-calendar" /></svg>
+                </div>
+                <div class="qcard__label">本月支出</div>
+                <div class="qcard__val"><small>¥</small><span id="qMonth">1,160</span></div>
+                <div class="qcard__foot is-new" id="qMonthFoot">本月新增</div>
+              </div>
+              <div class="qcard" style="--tint:rgba(255,157,46,.18)">
+                <div class="qcard__ic qcard__ic--orange">
+                  <svg class="ico"><use href="#i-fuel" /></svg>
+                </div>
+                <div class="qcard__label">本月油费</div>
+                <div class="qcard__val"><small>¥</small><span id="qFuel">600</span></div>
+                <div class="qcard__foot is-new" id="qFuelFoot">本月新增</div>
+              </div>
+              <div class="qcard" style="--tint:rgba(63,128,244,.16)">
+                <div class="qcard__ic qcard__ic--blue">
+                  <svg class="ico"><use href="#i-park" /></svg>
+                </div>
+                <div class="qcard__label">本月停车</div>
+                <div class="qcard__val"><small>¥</small><span id="qPark">20</span></div>
+                <div class="qcard__foot" id="qParkFoot">本月 2 笔</div>
+              </div>
+            </div>
+
+            </section>
+            <!-- 燃油专属模块 -->
+            <section class="glass fuelmod" style="--i:5">
+              <div class="sec-head" style="padding:0 4px 0">
+                <h2>燃油专属模块</h2>
+                <span class="more" style="pointer-events:none" id="fuelModCount">共 3 项</span>
+              </div>
+              <div class="fuelmod__list">
+                <button class="fitem" data-goto="bills" data-filter="fuel">
+                  <span class="fitem__ic fitem__ic--orange"><svg class="ico"><use href="#i-fuel" /></svg></span>
+                  <span style="flex:1">
+                    <span class="fitem__t">加油成本</span>
+                    <span class="fitem__m">¥<span id="fuelCost">2,145</span><span>累计</span></span>
+                    <span class="fitem__bar"><i style="--w:78%"></i></span>
+                  </span>
+                </button>
+                <button class="fitem" data-goto="bills" data-filter="care">
+                  <span class="fitem__ic fitem__ic--green"><svg class="ico"><use href="#i-wrench" /></svg></span>
+                  <span style="flex:1">
+                    <span class="fitem__t">保养成本</span>
+                    <span class="fitem__m">¥<span id="careCost">860</span><span>累计</span></span>
+                    <span class="fitem__bar"><i class="is-green" style="--w:34%"></i></span>
+                  </span>
+                </button>
+                <button class="fitem fitem--wide" data-goto="bills" data-filter="other">
+                  <span class="fitem__ic fitem__ic--blue"><svg class="ico"><use href="#i-shield" /></svg></span>
+                  <span style="flex:1">
+                    <span class="fitem__t">保险与杂项</span>
+                    <span class="fitem__m">¥<span id="miscCost">463</span><span>累计</span></span>
+                    <span class="fitem__bar"><i class="is-blue" style="--w:18%"></i></span>
+                  </span>
+                  <svg class="ico" style="width:14px;height:14px;color:rgba(14,31,56,.22)"><use href="#i-chev" /></svg>
+                </button>
+              </div>
+            </section>
+
+            <!-- 最近记录 -->
+            <section class="glass recent" style="--i:6">
+              <div class="sec-head" style="padding:0 4px 2px">
+                <h2>最近记录</h2>
+                <button class="more" data-goto="bills">全部账目
+                  <svg class="ico" style="width:12px;height:12px"><use href="#i-chev" /></svg>
+                </button>
+              </div>
+              <div id="recentList"></div>
+            </section>
+
+            <div style="height:6px"></div>
+          </section>
+
+          <!-- ========== 记账页 ========== -->
+          <section class="page" id="page-bills" data-page="bills" role="tabpanel" aria-labelledby="tab-bills" inert>
+            <header class="page-head" style="--i:0">
+              <div>
+                <h1>账目</h1>
+                <p>每一笔都算数，成本自然清楚</p>
+              </div>
+              <button class="iconbtn" id="filterBtn" aria-label="筛选">
+                <svg class="ico" style="width:20px;height:20px"><use href="#i-menu" /></svg>
+              </button>
+            </header>
+
+            <div class="monthbar" style="--i:1">
+              <button class="monthbar__btn" id="prevMonth" aria-label="上个月">
+                <svg class="ico" style="width:14px;height:14px"><use href="#i-back" /></svg>
+              </button>
+              <span class="monthbar__label" id="monthLabel">2026 年 11 月</span>
+              <button class="monthbar__btn" id="nextMonth" aria-label="下个月">
+                <svg class="ico" style="width:14px;height:14px"><use href="#i-chev" /></svg>
+              </button>
+              <span class="monthbar__spacer"></span>
+              <button class="chip-filter" id="monthReset">
+                <svg class="ico" style="width:12px;height:12px"><use href="#i-calendar" /></svg>
+                本月
+              </button>
+            </div>
+
+            <div class="glass summary" style="--i:2">
+              <div class="summary__k">本月总支出</div>
+              <div class="summary__v"><small>¥</small><span id="billSum">1,160</span></div>
+              <div class="summary__row">
+                <div class="summary__cell"><b id="billCount">7 笔</b><span>记账笔数</span></div>
+                <div class="summary__cell"><b id="billAvg">¥166</b><span>单笔均值</span></div>
+                <div class="summary__cell"><b id="billKm">558 km</b><span>本月里程</span></div>
+              </div>
+            </div>
+
+            <div class="chips" style="--i:3;display:flex;gap:7px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none" id="filterChips"></div>
+
+            <div id="billList" style="--i:4"></div>
+            <div style="height:8px"></div>
+          </section>
+
+          <!-- ========== 统计页 ========== -->
+          <section class="page" id="page-stats" data-page="stats" role="tabpanel" aria-labelledby="tab-stats" inert>
+            <header class="page-head" style="--i:0">
+              <div>
+                <h1>用车报告</h1>
+                <p id="statSub">2026 年 11 月 · 共 7 笔</p>
+              </div>
+              <div class="monthstepper" id="statMonthBadge">
+                <button class="monthbar__btn" id="statPrev" aria-label="上个月">
+                  <svg class="ico" style="width:12px;height:12px"><use href="#i-back" /></svg>
+                </button>
+                <span id="statMonthText">11 月</span>
+                <button class="monthbar__btn" id="statNext" aria-label="下个月">
+                  <svg class="ico" style="width:12px;height:12px"><use href="#i-chev" /></svg>
+                </button>
+              </div>
+            </header>
+
+            <button class="report-entry" id="openReport" style="--i:1">
+              <div class="report-entry__a" aria-hidden="true"></div>
+              <div class="report-entry__b" aria-hidden="true"></div>
+              <div class="report-entry__l">
+                <div class="report-entry__k">
+                  <span id="reYear">2026</span> 年度报告
+                  <svg class="ico" style="width:11px;height:11px"><use href="#i-spark" /></svg>
+                </div>
+                <div class="report-entry__t">这一年养车花了 <b id="reTotal">¥0</b></div>
+                <div class="report-entry__s">12 个月账单 · 年度之最 · 一页看完</div>
+              </div>
+              <span class="report-entry__go">
+                <svg class="ico"><use href="#i-chev" /></svg>
+              </span>
+            </button>
+
+            <div class="glass stat-main" style="--i:2">
+              <div class="ringwrap">
+                <svg width="188" height="188" viewBox="0 0 188 188" id="donut">
+                  <circle cx="94" cy="94" r="72" fill="none" stroke="rgba(14,31,56,.06)" stroke-width="18" />
+                  <g id="donutSegs" transform="rotate(-90 94 94)"></g>
+                </svg>
+                <div class="ring-center">
+                  <div class="k">本月支出</div>
+                  <div class="v"><small>¥</small><span id="donutTotal">1,160</span></div>
+                  <div class="d" id="donutDelta">较上月 +81%</div>
+                </div>
+              </div>
+              <div class="legend" id="legend"></div>
+            </div>
+
+            <div class="glass chartcard" style="--i:2">
+              <div class="chartcard__head">
+                <h3>近 6 个月支出</h3>
+                <span id="barsAvg">月均 ¥1,046</span>
+              </div>
+              <div class="bars" id="bars"></div>
+            </div>
+
+            <div class="glass trend" style="--i:3">
+              <div class="chartcard__head">
+                <h3>单公里成本趋势</h3>
+                <span>元 / km</span>
+              </div>
+              <svg viewBox="0 0 320 96" id="trendChart">
+                <defs>
+                  <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#2f6bf6" stop-opacity=".26" />
+                    <stop offset="1" stop-color="#2f6bf6" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <g id="trendGrid"></g>
+                <path id="trendArea" fill="url(#trendFill)" />
+                <path id="trendLine" fill="none" stroke="#2f6bf6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                <g id="trendDots"></g>
+              </svg>
+              <div class="trend__foot">
+                <span class="trend__badge" id="trendBadge">—</span>
+                <span class="trend__note">按记账支出折算</span>
+              </div>
+            </div>
+
+            <div style="height:8px"></div>
+          </section>
+
+          <!-- ========== 我的 ========== -->
+          <section class="page" id="page-me" data-page="me" role="tabpanel" aria-labelledby="tab-me" inert>
+            <header class="page-head" style="--i:0">
+              <div>
+                <h1>我的</h1>
+                <p>车况、账本与偏好设置</p>
+              </div>
+              <button class="iconbtn" id="settingsBtn" aria-label="设置">
+                <svg class="ico" style="width:19px;height:19px"><use href="#i-settings" /></svg>
+              </button>
+            </header>
+
+            <div class="glass profile-card" style="--i:1">
+              <div class="avatar" aria-hidden="true" id="profileAvatar">L</div>
+              <div style="min-width:0">
+                <div class="profile-card__n" id="profileName">Lucas的车库</div>
+                <div class="profile-card__s" id="meSub">已记账 42 笔 · 坚持 41 天</div>
+                <div class="profile-card__badge">
+                  <svg class="ico" style="width:10px;height:10px"><use href="#i-bulb" /></svg>
+                  精算车主 · Lv.4
+                </div>
+              </div>
+              <svg class="ico chev profile-card__go" style="width:16px;height:16px"><use href="#i-chev" /></svg>
+            </div>
+
+            <button class="glass car-mini" style="--i:2" data-open="carSheet">
+              <span class="car-mini__art" id="carMiniArt" aria-hidden="true"></span>
+              <span style="flex:1;min-width:0">
+                <span class="car-mini__n" id="carMiniName">小吉 · 燃油汽车</span>
+                <span class="car-mini__s" style="display:block" id="meCarSub">当前里程 8,012 km · 车龄 1 年 3 个月</span>
+                <span class="car-mini__tag" id="meCareTag">下次保养还剩 1,792 km</span>
+              </span>
+              <svg class="ico" style="width:14px;height:14px;color:rgba(14,31,56,.22)"><use href="#i-chev" /></svg>
+            </button>
+
+            <div class="quad" style="--i:3;grid-template-columns:repeat(3,1fr);margin-top:12px">
+              <div class="qcard">
+                <div class="qcard__label">累计支出</div>
+                <div class="qcard__val" style="margin-top:6px"><small>¥</small><span id="meTotal">2,636</span></div>
+                <div class="qcard__foot" id="meSince">自 2026.01 起</div>
+              </div>
+              <div class="qcard">
+                <div class="qcard__label">总里程</div>
+                <div class="qcard__val" style="margin-top:6px"><span id="meKm">4,208</span><span style="font-size:10px;font-weight:600;color:var(--ink-3);margin-left:2px">km</span></div>
+                <div class="qcard__foot" id="meKmFoot">近 30 天 —</div>
+              </div>
+              <div class="qcard">
+                <div class="qcard__label">每公里</div>
+                <div class="qcard__val" style="margin-top:6px"><small>¥</small><span id="mePerKm">1.9</span></div>
+                <div class="qcard__foot">含全部花费</div>
+              </div>
+            </div>
+
+            <div class="setgroup" style="--i:4">
+              <button class="setrow" id="webdavRow">
+                <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-cloud" /></svg></span>
+                <span class="setrow__t">WebDAV 云备份</span>
+                <span class="setrow__v" id="webdavState">未配置</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="importRow">
+                <span class="setrow__ic"><svg class="ico"><use href="#i-download" /></svg></span>
+                <span class="setrow__t">导入账本</span>
+                <span class="setrow__v">CSV / JSON</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="exportRow">
+                <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-upload" /></svg></span>
+                <span class="setrow__t">导出账本</span>
+                <span class="setrow__v">CSV</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+            </div>
+
+            <div class="setgroup" style="--i:5">
+              <button class="setrow" data-open="carSheet">
+                <span class="setrow__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                <span class="setrow__t">车辆管理</span>
+                <span class="setrow__v" id="meCarCount">1 辆</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="remindRow">
+                <span class="setrow__ic setrow__ic--orange"><svg class="ico"><use href="#i-bell" /></svg></span>
+                <span class="setrow__t">保养提醒</span>
+                <span class="setrow__v" data-service-distance>—</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="resetRow">
+                <span class="setrow__ic setrow__ic--violet"><svg class="ico"><use href="#i-settings" /></svg></span>
+                <span class="setrow__t">恢复示例数据</span>
+                <span class="setrow__v">演示用</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="clearDemoRow">
+                <span class="setrow__ic setrow__ic--rose"><svg class="ico"><use href="#i-trash" /></svg></span>
+                <span class="setrow__t">清空演示数据<em class="setrow__hint">只删示例账目，自己记的会保留</em></span>
+                <span class="setrow__v" data-demo-count>—</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+            </div>
+
+            <div class="setgroup" style="--i:6">
+              <button class="setrow" id="privacyRow">
+                <span class="setrow__ic"><svg class="ico"><use href="#i-shield" /></svg></span>
+                <span class="setrow__t">隐私与数据</span>
+                <span class="setrow__v">仅本机</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+              <button class="setrow" id="aboutRow">
+                <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-bulb" /></svg></span>
+                <span class="setrow__t">关于养车有谱</span>
+                <span class="setrow__v" id="aboutVersion">v1.11.3</span>
+                <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+              </button>
+            </div>
+
+            <div class="version">养车有谱 · 花钱有谱，养车不慌</div>
+          </section>
+
+        </main>
+
+        <!-- ============ 年度报告 ============ -->
+        <div class="report" id="yearReport" aria-hidden="true">
+          <div class="report__bg" aria-hidden="true"></div>
+          <div class="report__scroll" id="reportScroll">
+
+            <section class="rp-cover">
+              <div class="rp-cover__orb rp-cover__orb--1" aria-hidden="true"></div>
+              <div class="rp-cover__orb rp-cover__orb--2" aria-hidden="true"></div>
+              <div class="rp-cover__top">
+                <button class="rp-icon" id="reportClose" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+                <span class="rp-cover__brand">养车有谱</span>
+                <button class="rp-icon" id="reportShare" aria-label="分享">
+                  <svg class="ico"><use href="#i-share" /></svg>
+                </button>
+              </div>
+
+              <div class="rp-cover__body">
+                <div class="rp-kicker">年度养车报告</div>
+                <div class="rp-year" id="rpYear">2026</div>
+                <h2 class="rp-cover__h">这台车<br/>又陪你走了一年</h2>
+
+                <div class="rp-cover__total">
+                  <span>全年养车支出</span>
+                  <div><small>¥</small><b id="rpTotal">0</b></div>
+                </div>
+
+                <div class="rp-cover__meta">
+                  <div><b id="rpKm">0</b><span>公里</span></div>
+                  <i></i>
+                  <div><b id="rpCount">0</b><span>笔账单</span></div>
+                  <i></i>
+                  <div><b id="rpDays">0</b><span>天有记录</span></div>
+                </div>
+              </div>
+
+              <svg class="rp-cover__trace" viewBox="0 0 340 96" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="rpTraceFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#5ce8ae" stop-opacity=".26" />
+                    <stop offset="1" stop-color="#5ce8ae" stop-opacity="0" />
+                  </linearGradient>
+                  <linearGradient id="rpTraceLine" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#8dffcb" stop-opacity=".35" />
+                    <stop offset=".7" stop-color="#8dffcb" stop-opacity=".9" />
+                    <stop offset="1" stop-color="#ffffff" stop-opacity=".95" />
+                  </linearGradient>
+                </defs>
+                <path id="rpTraceArea" fill="url(#rpTraceFill)" d="" />
+                <path id="rpTraceLine" fill="none" stroke="url(#rpTraceLine)" stroke-width="1.6" stroke-linecap="round" d="" />
+                <circle id="rpTraceDot" r="3.2" fill="#fff" opacity="0" />
+              </svg>
+
+              <div class="rp-cover__down">
+                <span>向下滑动</span>
+                <svg class="ico" style="width:14px;height:14px"><use href="#i-chev-down" /></svg>
+              </div>
+            </section>
+
+            <section class="rp-sec">
+              <div class="rp-sec__k">01 · 月度节奏</div>
+              <h3 class="rp-sec__h">钱，是这么花出去的</h3>
+              <p class="rp-sec__p" id="rpMonthLine">全年支出分布</p>
+              <div class="rp-card">
+                <div class="rp-bars" id="rpBars"></div>
+                <div class="rp-bars__axis" id="rpAxis"></div>
+              </div>
+            </section>
+
+            <section class="rp-sec">
+              <div class="rp-sec__k">02 · 花在哪</div>
+              <h3 class="rp-sec__h">最舍得的一笔开销</h3>
+              <p class="rp-sec__p" id="rpCatLine">按类别统计</p>
+              <div class="rp-card">
+                <div class="rp-rank" id="rpRank"></div>
+              </div>
+            </section>
+
+            <section class="rp-sec">
+              <div class="rp-sec__k">03 · 四个数字</div>
+              <h3 class="rp-sec__h">这一年的用车强度</h3>
+              <div class="rp-grid" id="rpGrid"></div>
+            </section>
+
+            <section class="rp-sec">
+              <div class="rp-sec__k">04 · 几个瞬间</div>
+              <h3 class="rp-sec__h">值得记住的几笔</h3>
+              <div class="rp-moments" id="rpMoments"></div>
+            </section>
+
+            <section class="rp-end">
+              <div class="rp-end__spark" aria-hidden="true">
+                <svg class="ico"><use href="#i-spark" /></svg>
+              </div>
+              <h3 id="rpNext">继续有谱</h3>
+              <p>每一次加油、每一次保养，<br/>都算数。</p>
+              <button class="rp-end__btn" id="reportShare2">
+                <svg class="ico"><use href="#i-share" /></svg>
+                分享这份报告
+              </button>
+              <button class="rp-end__ghost" id="reportClose2">回到账本</button>
+              <div class="rp-end__foot">养车有谱 · 数据来自你的真实记账</div>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- ============ 底部导航 ============ -->
+        <nav class="tabbar" aria-label="主导航">
+          <canvas class="tabbar__ink" id="dock-ink" aria-hidden="true" width="388" height="112"></canvas>
+          <div class="tabbar__rest" id="dockRest" aria-hidden="true"></div>
+          <div class="tabbar__lens" id="tabLens" aria-hidden="true"></div>
+          <div class="tabbar__tabs" role="tablist" aria-label="应用页面">
+
+          <button class="tab is-active" id="tab-home" data-tab="home" role="tab" aria-controls="page-home" aria-selected="true">
+            <span class="tab__ic">
+              <svg class="ico ico--line"><use href="#i-home" /></svg>
+              <svg class="ico ico--fill"><use href="#i-home-f" /></svg>
+            </span>
+            <span class="tab__t">首页</span>
+          </button>
+
+          <button class="tab" id="tab-bills" data-tab="bills" role="tab" aria-controls="page-bills" aria-selected="false" tabindex="-1">
+            <span class="tab__ic">
+              <svg class="ico ico--line"><use href="#i-list" /></svg>
+              <svg class="ico ico--fill"><use href="#i-list-f" /></svg>
+            </span>
+            <span class="tab__t">记账</span>
+          </button>
+
+          <button class="tab" id="tab-stats" data-tab="stats" role="tab" aria-controls="page-stats" aria-selected="false" tabindex="-1">
+            <span class="tab__ic">
+              <svg class="ico ico--line"><use href="#i-chart" /></svg>
+              <svg class="ico ico--fill"><use href="#i-chart-f" /></svg>
+            </span>
+            <span class="tab__t">统计</span>
+          </button>
+
+          <button class="tab" id="tab-me" data-tab="me" role="tab" aria-controls="page-me" aria-selected="false" tabindex="-1">
+            <span class="tab__ic">
+              <svg class="ico ico--line"><use href="#i-user" /></svg>
+              <svg class="ico ico--fill"><use href="#i-user-f" /></svg>
+            </span>
+            <span class="tab__t">我的</span>
+          </button>
+          </div>
+          <button class="fab" id="fab" aria-label="记一笔">
+            <svg class="fab__face" viewBox="0 0 54 44" aria-hidden="true"><use href="#fab-art" /></svg>
+          </button>
+        </nav>
+
+        <!-- ============ 记账抽屉 ============ -->
+        <div class="sheet-wrap" id="entrySheet" aria-hidden="true">
+          <div class="scrim" data-close="entrySheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="记一笔">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title" id="entryTitle">记一笔</div>
+                  <div class="sheet__sub" id="entryDateText">今天 · 11 月 22 日</div>
+                </div>
+                <button class="sheet__close" data-close="entrySheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+
+              <div class="amount-box">
+                <div class="k">支出金额</div>
+                <div class="amount-display">
+                  <span class="cur">¥</span>
+                  <span class="num is-zero" id="amountNum">0</span>
+                </div>
+              </div>
+
+              <div class="catgrid" id="catGrid"></div>
+
+              <div class="field field--date" id="dateField">
+                <span class="field__ic"><svg class="ico"><use href="#i-calendar" /></svg></span>
+                <label>日期</label>
+                <span class="field__date" id="dateText">今天</span>
+                <input type="date" id="entryDate" aria-label="选择日期" />
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-gauge" /></svg></span>
+                <label>当前里程</label>
+                <input type="number" id="entryMileage" inputmode="numeric" placeholder="选填，用于算油耗" />
+                <span class="field__suffix">km</span>
+              </div>
+              <div class="field" id="fuelField" hidden>
+                <span class="field__ic"><svg class="ico"><use href="#i-drop" /></svg></span>
+                <label>加油量</label>
+                <input type="number" id="entryLiters" inputmode="decimal" step="0.01" min="0" placeholder="选填，填了就能算油耗" />
+                <span class="field__suffix">L</span>
+              </div>
+              <div class="fuel-hint" id="fuelHint" hidden></div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-note" /></svg></span>
+                <label>备注</label>
+                <input type="text" id="entryNote" maxlength="24" placeholder="加个备注，方便回看" />
+              </div>
+              <div class="save-note" id="entrySaveNote">数据仅保存在本机，随时可导出</div>
+            </div>
+
+            <div class="keypad" id="keypad">
+              <button class="key" data-k="1">1</button>
+              <button class="key" data-k="2">2</button>
+              <button class="key" data-k="3">3</button>
+              <button class="key key--ok" data-k="ok">完成</button>
+              <button class="key" data-k="4">4</button>
+              <button class="key" data-k="5">5</button>
+              <button class="key" data-k="6">6</button>
+              <button class="key" data-k="7">7</button>
+              <button class="key" data-k="8">8</button>
+              <button class="key" data-k="9">9</button>
+              <button class="key key--fn" data-k=".">·</button>
+              <button class="key" data-k="0">0</button>
+              <button class="key key--fn" data-k="del">
+                <svg class="ico" style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 5h10.6A1.4 1.4 0 0 1 21 6.4v11.2a1.4 1.4 0 0 1-1.4 1.4H9L3.4 12z" />
+                  <path d="m11.4 9.4 5.2 5.2M16.6 9.4l-5.2 5.2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 车辆详情抽屉 ============ -->
+        <div class="sheet-wrap" id="carSheet" aria-hidden="true">
+          <div class="scrim" data-close="carSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="车辆详情">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:14px">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title" id="carSheetTitle">我的座驾</div>
+                  <div class="sheet__sub" id="carSheetSub">小吉 · 燃油汽车 · 2025 年 8 月上牌</div>
+                </div>
+                <button class="sheet__close" data-close="carSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+
+              <div class="cardetail__hero" id="carHero" aria-hidden="true"></div>
+
+              <div class="cardetail__stats">
+                <div class="cstat"><b id="detailKm">—</b><span>当前里程 km</span></div>
+                <div class="cstat"><b id="detailAge">—</b><span>车龄</span></div>
+                <div class="cstat"><b id="detailFuel">—</b><span>油耗 L/100km</span></div>
+              </div>
+
+              <div class="setgroup" style="margin-top:0;background:rgba(255,255,255,.5);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)">
+                <div class="setrow">
+                  <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-road" /></svg></span>
+                  <span class="setrow__t">本月行驶</span>
+                  <span class="setrow__v" id="detailMonthKm">—</span>
+                </div>
+                <div class="setrow">
+                  <span class="setrow__ic setrow__ic--orange"><svg class="ico"><use href="#i-wrench" /></svg></span>
+                  <span class="setrow__t">下次保养</span>
+                  <span class="setrow__v" data-service-distance>—</span>
+                </div>
+                <div class="setrow">
+                  <span class="setrow__ic"><svg class="ico"><use href="#i-shield" /></svg></span>
+                  <span class="setrow__t">保险到期</span>
+                  <span class="setrow__v" id="detailInsurance" style="font-weight:600;color:var(--ink-2)">—</span>
+                </div>
+                <div class="setrow">
+                  <span class="setrow__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                  <span class="setrow__t">车牌</span>
+                  <span class="setrow__v" id="detailPlate" style="font-weight:600;color:var(--ink-2)">—</span>
+                </div>
+                <div class="setrow">
+                  <span class="setrow__ic setrow__ic--violet"><svg class="ico"><use href="#i-drop" /></svg></span>
+                  <span class="setrow__t">保养间隔</span>
+                  <span class="setrow__v" id="detailInterval">—</span>
+                </div>
+              </div>
+
+              <button class="btn-primary" id="carEditBtn">
+                <svg class="ico" style="width:15px;height:15px"><use href="#i-edit" /></svg>
+                编辑车辆信息
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 消息抽屉 ============ -->
+        <div class="sheet-wrap" id="notifySheet" aria-hidden="true">
+          <div class="scrim" data-close="notifySheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="消息" style="max-height:68%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:16px">
+              <div class="sheet__head" style="padding-top:6px">
+                <div>
+                  <div class="sheet__title">消息</div>
+                  <div class="sheet__sub">车况与账本提醒</div>
+                </div>
+                <button class="sheet__close" data-close="notifySheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+              <div class="notify-list" id="notifyList"></div>
+              <div class="notify-foot">根据账本与车辆信息实时计算</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 记录详情抽屉 ============ -->
+        <div class="sheet-wrap" id="recordSheet" aria-hidden="true">
+          <div class="scrim" data-close="recordSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="记录详情" style="max-height:74%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:18px">
+              <div class="sheet__head" style="padding-top:6px">
+                <div class="sheet__title">这笔记录</div>
+                <button class="sheet__close" data-close="recordSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+              <div id="recordBody"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 车辆信息编辑 ============ -->
+        <div class="sheet-wrap" id="carEditSheet" aria-hidden="true">
+          <div class="scrim" data-close="carEditSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="编辑车辆信息" style="max-height:88%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:12px">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title">车辆信息</div>
+                  <div class="sheet__sub">用于车龄、保养与保险提醒</div>
+                </div>
+                <button class="sheet__close" data-close="carEditSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+              <div class="carlab">
+                <div class="carlab__stage" id="stylePreview"></div>
+                <div class="carlab__meta">
+                  <b id="styleName">白色 SUV</b>
+                  <span>轮子会一直转，选一个顺眼的</span>
+                </div>
+              </div>
+
+              <div class="picker">
+                <div class="picker__head"><span>车身造型</span><em id="pickerBody">SUV</em></div>
+                <div class="model-row" id="modelRow" role="radiogroup" aria-label="车身造型"></div>
+                <div class="picker__head" style="margin-top:14px"><span>车漆</span><em id="pickerPaint">珍珠白</em></div>
+                <div class="paint-row" id="paintRow" role="radiogroup" aria-label="车漆颜色"></div>
+              </div>
+
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                <label>昵称</label>
+                <input type="text" id="vfName" maxlength="8" placeholder="小吉" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                <label>车库名</label>
+                <input type="text" id="vfOwner" maxlength="12" placeholder="Lucas的车库" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-gauge" /></svg></span>
+                <label>车型</label>
+                <input type="text" id="vfModel" maxlength="10" placeholder="燃油汽车" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                <label>车牌</label>
+                <input type="text" id="vfPlate" maxlength="12" placeholder="粤 B · 7F2K9" />
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-gauge" /></svg></span>
+                <label>当前里程</label>
+                <input type="number" id="vfMileage" inputmode="numeric" min="0" step="1" placeholder="4208" />
+                <span class="field__suffix">km</span>
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-calendar" /></svg></span>
+                <label>上牌年月</label>
+                <input type="month" id="vfRegistered" />
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-shield" /></svg></span>
+                <label>保险到期</label>
+                <input type="month" id="vfInsurance" />
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-wrench" /></svg></span>
+                <label>保养间隔</label>
+                <input type="number" id="vfInterval" inputmode="numeric" min="500" step="100" placeholder="7200" />
+                <span class="field__suffix">km</span>
+              </div>
+              <div class="field">
+                <span class="field__ic"><svg class="ico"><use href="#i-road" /></svg></span>
+                <label>上次保养里程</label>
+                <input type="number" id="vfBase" inputmode="numeric" min="0" step="1" placeholder="0" />
+                <span class="field__suffix">km</span>
+              </div>
+              <div class="save-note">留空则按账本里的保养记录推算</div>
+            </div>
+            <div class="sheet__foot">
+              <button class="btn-ghost" data-close="carEditSheet">取消</button>
+              <button class="btn-primary" id="vfSave">保存</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 设置 ============ -->
+        <div class="sheet-wrap" id="settingsSheet" aria-hidden="true">
+          <div class="scrim" data-close="settingsSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="设置" style="max-height:80%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:16px">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title">设置</div>
+                  <div class="sheet__sub">数据、备份与偏好</div>
+                </div>
+                <button class="sheet__close" data-close="settingsSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+
+              <div class="setgroup" style="margin-top:8px">
+                <button class="setrow" data-open="webdavSheet">
+                  <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-cloud" /></svg></span>
+                  <span class="setrow__t">WebDAV 云备份</span>
+                  <span class="setrow__v" data-webdav-state>未配置</span>
+                  <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+                </button>
+                <button class="setrow" data-open="carSheet">
+                  <span class="setrow__ic"><svg class="ico"><use href="#i-car" /></svg></span>
+                  <span class="setrow__t">车辆信息</span>
+                  <span class="setrow__v" id="setCarName">—</span>
+                  <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+                </button>
+                <button class="setrow" id="settingsImport">
+                  <span class="setrow__ic"><svg class="ico"><use href="#i-download" /></svg></span>
+                  <span class="setrow__t">导入账本</span>
+                  <span class="setrow__v">CSV / JSON</span>
+                  <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+                </button>
+              </div>
+
+              <div class="setgroup">
+                <button class="setrow" id="settingsPrivacy">
+                  <span class="setrow__ic"><svg class="ico"><use href="#i-lock" /></svg></span>
+                  <span class="setrow__t">隐私与数据</span>
+                  <span class="setrow__v">仅本机</span>
+                  <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+                </button>
+                <button class="setrow" id="settingsAbout">
+                  <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-info" /></svg></span>
+                  <span class="setrow__t">关于养车有谱</span>
+                  <span class="setrow__v" id="settingsVersion">v1.11.3</span>
+                  <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
+                </button>
+                <button class="setrow setrow--danger" id="settingsClear">
+                  <span class="setrow__ic setrow__ic--rose"><svg class="ico"><use href="#i-trash" /></svg></span>
+                  <span class="setrow__t">清空全部账本</span>
+                  <span class="setrow__v">不可撤销</span>
+                </button>
+              </div>
+
+              <div class="version" id="footVersion">养车有谱 v1.11.3 · 本地优先，云端可选</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ WebDAV 备份 ============ -->
+        <div class="sheet-wrap" id="webdavSheet" aria-hidden="true">
+          <div class="scrim" data-close="webdavSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="WebDAV 云备份" style="max-height:92%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:18px">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title">WebDAV 云备份</div>
+                  <div class="sheet__sub">把账本存到你自己的网盘或 NAS</div>
+                </div>
+                <button class="sheet__close" data-close="webdavSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+
+              <div class="wd-status" id="wdStatus">未配置账号，填好后先测试连接</div>
+
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-cloud" /></svg></span>
+                <label>服务器</label>
+                <input type="url" id="wdUrl" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://dav.example.com/dav" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-user" /></svg></span>
+                <label>账号</label>
+                <input type="text" id="wdUser" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" placeholder="邮箱或用户名" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-key" /></svg></span>
+                <label>密码</label>
+                <input type="password" id="wdPass" autocomplete="current-password" placeholder="应用密码 / 授权码" />
+              </div>
+              <div class="field field--text">
+                <span class="field__ic"><svg class="ico"><use href="#i-list" /></svg></span>
+                <label>目录</label>
+                <input type="text" id="wdDir" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="养车有谱" />
+              </div>
+
+              <div class="setgroup" style="margin-top:10px">
+                <div class="setrow">
+                  <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-refresh" /></svg></span>
+                  <span class="setrow__t">自动备份<em class="setrow__hint">记账后自动上传一次</em></span>
+                  <button class="switch" id="wdAuto" type="button" role="switch" aria-checked="false" aria-label="自动备份"><i></i></button>
+                </div>
+              </div>
+
+              <div class="wd-actions">
+                <button class="btn-ghost" id="wdTest">测试连接</button>
+                <button class="btn-primary" id="wdBackup">
+                  <svg class="ico" style="width:15px;height:15px"><use href="#i-upload" /></svg>
+                  立即备份
+                </button>
+              </div>
+
+              <div class="wd-listhead">
+                <span>云端备份</span>
+                <button id="wdRefresh">
+                  <svg class="ico" style="width:12px;height:12px"><use href="#i-refresh" /></svg>
+                  刷新
+                </button>
+              </div>
+              <div class="wd-list" id="wdList"><div class="empty">连接后显示备份文件</div></div>
+              <button class="btn-quiet" id="wdRestoreLatest">恢复最近一次备份</button>
+              <div class="wd-note">密码只保存在本机，备份文件不含密码。支持坚果云、Nextcloud、群晖等标准 WebDAV 服务。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 通用信息页 ============ -->
+        <div class="sheet-wrap" id="infoSheet" aria-hidden="true">
+          <div class="scrim" data-close="infoSheet"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-label="信息" style="max-height:82%">
+            <div class="sheet__handle"></div>
+            <div class="sheet__body" style="padding-bottom:18px">
+              <div class="sheet__head">
+                <div>
+                  <div class="sheet__title" id="infoTitle">关于养车有谱</div>
+                  <div class="sheet__sub" id="infoSub">v1.11.3</div>
+                </div>
+                <button class="sheet__close" data-close="infoSheet" aria-label="关闭">
+                  <svg class="ico"><use href="#i-close" /></svg>
+                </button>
+              </div>
+              <div class="info-body" id="infoBody"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 确认 ============ -->
+        <div class="sheet-wrap" id="confirmSheet" aria-hidden="true">
+          <div class="scrim" data-close="confirmSheet"></div>
+          <div class="sheet sheet--alert" role="alertdialog" aria-modal="true" aria-label="确认操作">
+            <div class="sheet__body" style="padding:22px 20px 18px">
+              <div class="confirm__ic" id="cfIcon"><svg class="ico"><use href="#i-info" /></svg></div>
+              <div class="confirm__t" id="cfTitle">确认操作</div>
+              <div class="confirm__p" id="cfBody"></div>
+              <div class="confirm__acts">
+                <button class="btn-ghost" id="cfCancel" data-close="confirmSheet">取消</button>
+                <button class="btn-primary" id="cfOk">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="file" id="importFile" accept=".csv,text/csv,.json,application/json" hidden />
+
+        <!-- Toast -->
+        <div class="toast" id="toast" role="status" aria-live="polite">
+          <span class="toast__check"><svg class="ico"><use href="#i-check" /></svg></span>
+          <span id="toastText">已记账</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="dock-material.js"></script>
+<script src="cars.js"></script>
+<script src="webdav.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
