@@ -8,7 +8,7 @@ const pad = (n) => String(n).padStart(2, "0");
 const STORE_KEY = "yangche.records.v2";
 const VEHICLE_KEY = "yangche.vehicle.v1";
 const SETTINGS_KEY = "yangche.settings.v1";
-const APP_VERSION = "1.11.3";
+const APP_VERSION = "1.11.4";
 const BACKUP_PREFIX = "yangche-";
 const BACKUP_KEEP = 10;
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -37,6 +37,12 @@ function money(n, decimals = 0) {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
+}
+
+/* 只限制小数位上限，整数不补零：52148 -> 52,148，37.13 -> 37.1 */
+function num(n, maxDecimals = 1) {
+  if (n == null || Number.isNaN(Number(n))) return "--";
+  return Number(n).toLocaleString("zh-CN", { maximumFractionDigits: maxDecimals });
 }
 function amountLabel(n) {
   return Number.isInteger(n) ? money(n) : money(n, 2);
@@ -268,6 +274,26 @@ function costPerKm() {
   return sum(state.records) / span;
 }
 
+/* 指标为空时，把「还差什么」直接写在卡片下方，避免用户以为是故障 */
+function fuelHintText() {
+  if (avgFuel() !== null) return "连续加满法";
+  const fuel = state.records.filter((r) => r.cat === "fuel" && Number(r.mileage) > 0 && Number(r.liters) > 0);
+  if (fuel.length === 0) return "记 2 次加油后显示";
+  if (fuel.length === 1) return "再记 1 次加油即可";
+  const miles = fuel.map((r) => Number(r.mileage));
+  if (new Set(miles).size < 2) return "两次加油的里程需不同";
+  return "里程或油量可能有误";
+}
+
+function costHintText() {
+  if (costPerKm() !== null) return "记账区间费用 ÷ 区间里程";
+  const miles = state.records.filter((r) => Number(r.mileage) > 0).map((r) => Number(r.mileage));
+  if (miles.length < 2) return "需 2 笔带里程的记录";
+  const span = Math.max(...miles) - Math.min(...miles);
+  if (span < 50) return `里程再跑 ${Math.ceil(50 - span)} km 后显示`;
+  return "里程需递增才能算";
+}
+
 function monthMileage(key) {
   const cur = monthRecords(key).filter((r) => Number(r.mileage) > 0);
   if (!cur.length) return 0;
@@ -434,6 +460,8 @@ function renderHome() {
   $("#avgFuel").textContent = af ? af.toFixed(1) : "--";
   const cpk = costPerKm();
   $("#perKm").textContent = cpk ? cpk.toFixed(1) : "--";
+  $("#avgFuelHint").textContent = fuelHintText();
+  $("#perKmHint").textContent = costHintText();
 
   const fuelTotal = sum(all.filter((r) => r.cat === "fuel"));
   const careTotal = sum(all.filter((r) => r.cat === "care"));
@@ -883,6 +911,7 @@ function renderMe() {
   $("#meTotal").textContent = money(total);
   $("#meKm").textContent = money(km);
   $("#mePerKm").textContent = cpk ? cpk.toFixed(1) : "--";
+  $("#mePerKmFoot").textContent = cpk ? "含全部花费" : "里程不足 50 km";
   $("#meSub").textContent = `已记账 ${state.records.length} 笔 · 坚持 ${days} 天`;
   $("#meKmFoot").textContent = recentKm ? `近 30 天 +${money(recentKm)}` : "近 30 天 无新增";
 
@@ -1381,17 +1410,43 @@ function saveEntry() {
     note: state.entry.note.trim(),
     liters: state.entry.cat === "fuel" && liters > 0 ? Math.round(liters * 100) / 100 : null,
   };
-  if (editingId) {
-    const index = state.records.findIndex((r) => r.id === editingId);
-    if (index >= 0) state.records[index] = rec;
-    else state.records.push(rec);
-  } else {
-    state.records.push(rec);
+  const commit = () => {
+    if (editingId) {
+      const index = state.records.findIndex((r) => r.id === editingId);
+      if (index >= 0) state.records[index] = rec;
+      else state.records.push(rec);
+    } else {
+      state.records.push(rec);
+    }
+    closeSheet("entrySheet");
+    dataChanged();
+    toast(editingId ? "已更新这笔记录" : `已记一笔 ¥${amountLabel(rec.amount)} · ${CATS[rec.cat].name}`);
+    if (state.page === "home") $("#recentList .rec")?.classList.add("is-fresh");
+  };
+
+  /* 防填反：里程与加油量填串是最高频的录入错误，两个值量级差得很远 */
+  const prevMax = state.records
+    .filter((r) => r.id !== editingId && Number(r.mileage) > 0)
+    .reduce((m, r) => Math.max(m, Number(r.mileage)), 0);
+  const weird = [];
+  if (Number(rec.liters) > 100) {
+    weird.push(`加油量 ${num(rec.liters)} L 超过大多数家用车的油箱`);
   }
-  closeSheet("entrySheet");
-  dataChanged();
-  toast(editingId ? "已更新这笔记录" : `已记一笔 ¥${amountLabel(rec.amount)} · ${CATS[rec.cat].name}`);
-  if (state.page === "home") $("#recentList .rec")?.classList.add("is-fresh");
+  if (Number(rec.mileage) > 0 && Number(rec.mileage) < 1000 && prevMax > 10000) {
+    weird.push(`里程 ${num(rec.mileage)} km 比之前的 ${money(prevMax)} km 小了一大截`);
+  }
+  if (weird.length) {
+    askConfirm({
+      title: "这两个数是不是填反了？",
+      body: `${weird.join("；")}。里程通常是五位数，加油量是两位数，检查一下有没有把两个框填串。`,
+      okText: "确认无误，保存",
+      cancelText: "返回修改",
+      icon: "#i-info",
+      onOk: commit,
+    });
+    return;
+  }
+  commit();
 }
 
 /* ---------- 记录详情 ---------- */

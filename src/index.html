@@ -338,7 +338,7 @@
                   <span class="metric__label">平均油耗</span>
                 </div>
                 <div class="metric__val"><b id="avgFuel">8.1</b><i>L/100km</i></div>
-                <div class="metric__hint">连续加满法</div>
+                <div class="metric__hint" id="avgFuelHint">连续加满法</div>
               </div>
               <div class="glass metric metric--blue">
                 <div class="metric__ghost"></div>
@@ -349,7 +349,7 @@
                   <span class="metric__label">单公里成本</span>
                 </div>
                 <div class="metric__val"><b id="perKm">1.9</b><i>元/km</i></div>
-                <div class="metric__hint">记账区间费用 ÷ 区间里程</div>
+                <div class="metric__hint" id="perKmHint">记账区间费用 ÷ 区间里程</div>
               </div>
             </div>
 
@@ -614,7 +614,7 @@
               <div class="qcard">
                 <div class="qcard__label">每公里</div>
                 <div class="qcard__val" style="margin-top:6px"><small>¥</small><span id="mePerKm">1.9</span></div>
-                <div class="qcard__foot">含全部花费</div>
+                <div class="qcard__foot" id="mePerKmFoot">含全部花费</div>
               </div>
             </div>
 
@@ -676,7 +676,7 @@
               <button class="setrow" id="aboutRow">
                 <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-bulb" /></svg></span>
                 <span class="setrow__t">关于养车有谱</span>
-                <span class="setrow__v" id="aboutVersion">v1.11.3</span>
+                <span class="setrow__v" id="aboutVersion">v1.11.4</span>
                 <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
               </button>
             </div>
@@ -1146,7 +1146,7 @@
                 <button class="setrow" id="settingsAbout">
                   <span class="setrow__ic setrow__ic--green"><svg class="ico"><use href="#i-info" /></svg></span>
                   <span class="setrow__t">关于养车有谱</span>
-                  <span class="setrow__v" id="settingsVersion">v1.11.3</span>
+                  <span class="setrow__v" id="settingsVersion">v1.11.4</span>
                   <svg class="ico chev" style="width:13px;height:13px"><use href="#i-chev" /></svg>
                 </button>
                 <button class="setrow setrow--danger" id="settingsClear">
@@ -1156,7 +1156,7 @@
                 </button>
               </div>
 
-              <div class="version" id="footVersion">养车有谱 v1.11.3 · 本地优先，云端可选</div>
+              <div class="version" id="footVersion">养车有谱 v1.11.4 · 本地优先，云端可选</div>
             </div>
           </div>
         </div>
@@ -1239,7 +1239,7 @@
               <div class="sheet__head">
                 <div>
                   <div class="sheet__title" id="infoTitle">关于养车有谱</div>
-                  <div class="sheet__sub" id="infoSub">v1.11.3</div>
+                  <div class="sheet__sub" id="infoSub">v1.11.4</div>
                 </div>
                 <button class="sheet__close" data-close="infoSheet" aria-label="关闭">
                   <svg class="ico"><use href="#i-close" /></svg>

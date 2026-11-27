@@ -1,6 +1,6 @@
 const scope = self.registration.scope;
 const prefix = `yangche-shell:${new URL(scope).pathname}:`;
-const cacheName = `${prefix}crystal-dock-9-6`;
+const cacheName = `${prefix}crystal-dock-9-7`;
 const shell = ["./", "index.html", "styles.css", "dock-material.js", "cars.js", "webdav.js", "dock-refraction.png", "app.js",
   "dock-body-map.png", "dock-body-light.png", "dock-lens-light.png",
   "manifest.webmanifest", "icons/icon-180.png", "icons/brand-192.png", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
